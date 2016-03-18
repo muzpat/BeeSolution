@@ -1,0 +1,28 @@
+﻿@using BeeSolution.Models
+@model Hive
+<h2>The Bee Game</h2>
+@using (Html.BeginForm("HitBees", "Home", FormMethod.Post))
+{
+    <table>
+        @foreach (Bee b in Model.BeeHive)
+        {
+            <tr>
+                <td>
+                    @Html.Label(b.beeType.ToString())
+                </td>
+                <td>
+                    @Html.Label(b.lifeSpan.ToString())
+                </td>
+                <td>
+                    @Html.Label(b.status.ToString()) 
+                </td>
+            </tr>
+        }
+    </table>
+    @Html.Label(Model.HitMessage.ToString())
+    <br />
+        <li>@Html.ActionLink("Restart the Bee Game", "StartBees", "Home")</li>
+        <br />
+        <input type="submit" name="Add" value="Hit Bee!" />
+}
+
