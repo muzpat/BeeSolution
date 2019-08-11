@@ -1,0 +1,183 @@
+﻿
+<head>
+    <style>
+        .myred {
+            background-color: red;
+        }
+
+        .mygreen {
+            background-color: green;
+        }
+    </style>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+    <script type="text/javascript">
+        var i = 1;                     //  set your counter to 1
+        var myTimer = 'start';
+
+        $(document).ready(function () {
+            //alert('here1');
+            $.ajax({
+                type: "POST",
+                url: "../Home/Bees",
+                //   data: jsonData,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json", // dataType is json format
+                //      beforeSend: function () { $.root_.addClass("loading"); },
+                //      complete: function () { $.root_.removeClass("loading"); },
+                success: OnSuccess,
+                error: OnErrorCall
+            });
+
+            function OnSuccess(response) {
+                // alert('here');
+                var data = $.parseJSON(response);
+
+                //   alert(data.BeeHive[0].beeType);
+                $('#Grid').append('<table><tr><th></th><th>Rank</th><th>Lives</th><th>Status</th></tr>');
+
+                for (var i = 0; i < data.BeeHive.length; ++i) {
+                    //                 $('#Grid').append('<div class="name">' + ToJavaScriptDate(data[i].review_date) + ' ' + data[i].review_stage
+                    //                     + ' ' + data[i].ops_product_id + ' ' + data[i].ProducT_sub_group_code
+                    //                     + '</>');
+
+                    $('#Grid').append('<tr bgcolor="#42f489"><td>' + data.BeeHive[i].beeId + '</td><td>' + data.BeeHive[i].beeType
+         + '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + data.BeeHive[i].status
+         + '</td></tr>');
+                }
+                $('#Grid').append('</table>');
+                myLoop();
+            }
+            function OnErrorCall(jqXHR, textStatus, errorThrown) {
+                debugger;
+                alert(jqXHR.responseText);
+                console.log("error - Ajax call has failed: <br />Err: " + errorThrown + "<br />textStatus: " + textStatus + "<br />ResponseText: " + jqXHR.responseText);
+            }
+        });
+        function myLoop() {           //  create a loop function
+
+         myTimer =    setTimeout(function () {    //  call a 3s setTimeout when the loop is called
+                //  alert('hello');          //  your code here
+                i++;                     //  increment the counter
+                if (i < 200) {            //  if the counter < 10, call the loop function
+                    myLoop();             //  ..  again which will trigger another
+                }                        //  ..  setTimeout()
+            }, 1000)
+            // debugger;
+            if (i > 2) {
+                $('#Grid table').remove();
+                $('#Grid th').remove();
+                $('#Grid').append('<table><tr><th></th><th>Rank</th><th>Lives</th><th>Status</th></tr>');
+                $.ajax({
+                    type: "POST",
+                    url: "../Home/Whack",
+                    //   data: jsonData,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json", // dataType is json format
+                    //      beforeSend: function () { $.root_.addClass("loading"); },
+                    //      complete: function () { $.root_.removeClass("loading"); },
+                    success: WhackSuccess,
+                    error: ErrorCall
+                });
+
+            }
+            //
+        }
+        function WhackSuccess(response) {
+            // alert('here');
+            var data = $.parseJSON(response);
+            $('#action').text(data.HitMessage);
+            var beewhacked = data.beeWhacked;
+            var gameend = data.HitMessage;
+            if (gameend == 'All bees dead!')
+            {
+                i = 1000;
+                showmodal();
+                myStopFunction();
+            }
+        //    alert(beewhacked);
+        //    $('#Grid').append('<table><tr><th>Bee</th><th>Life Span</th><th>Whack</th><th>Life Left</th></tr>');
+
+            for (var i = 0; i < data.BeeHive.length; ++i) {
+                var alive = 'Alive';
+                var beegrade = 'Queen';
+
+                if (data.BeeHive[i].beeType == 1) {
+                    beegrade = 'Worker';
+                }
+                if (data.BeeHive[i].beeType == 2) {
+                    beegrade = 'Drone';
+                }
+                if (data.BeeHive[i].status == 1) {
+                    alive = 'Dead';
+                }
+                if (i == beewhacked) {
+                    $('#Grid').append('<tr ><td class="myred">' + data.BeeHive[i].beeId + '</td><td>' + beegrade
+              + '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + alive
+              + '</td></tr>');
+                }
+                else {
+                    $('#Grid').append('<tr bgcolor="#42f489"><td>' + data.BeeHive[i].beeId + '</td><td>' + beegrade
+         + '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + alive
+         + '</td></tr>');
+                }
+            }
+            $('#Grid').append('</table>');
+
+        }
+        function ErrorCall(jqXHR, textStatus, errorThrown) {
+            alert(jqXHR.responseText);
+            console.log("error - Ajax call has failed: <br />Err: " + errorThrown + "<br />textStatus: " + textStatus + "<br />ResponseText: " + jqXHR.responseText);
+        }
+        function myStopFunction() {
+            if (myTimer === undefined || myTimer !== null) {
+                clearTimeout(myTimer);
+            }
+            myTimer = null;
+        }
+
+    </script>
+</head>
+<body>
+
+    <h2>Bee Game</h2>
+    <div id="dialog" title="Game Status" style="display:none">
+        <p>Game Over!!</p>
+    </div>
+    <label id="action">Starting the game. About to whack a random bee...</label>
+    <table class="table table-condensed" id="Grid"></table>
+
+
+    <script type="text/javascript">
+    function showmodal() {
+
+    //$("#TodaysCal").dialog({
+    //    autoOpen: false,
+    //    height: 400,
+    //    width: 700,
+    //    title: "GAME STATUS",
+    //    show: {
+    //        effect: "blind",
+    //        duration: "1000"
+    //    },
+    //    hide: {
+    //        effect: "explode",
+    //        duration: "1000"
+    //    },
+    //    buttons: {
+    //        Cancel: function () {
+    //            //  editsuccess();
+    //            jQuery(this).dialog("close");
+    //        }
+    //    }
+    //});
+
+    //$('div[id$="TodaysCal"]').show();
+    //$("#TodaysCal").dialog("open");
+    $('div[id$="dialog"]').show();
+       $("#dialog").dialog();
+    }
+    </script>
+</body>

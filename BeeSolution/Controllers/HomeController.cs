@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using BeeSolution.Models;
+using Newtonsoft.Json;
 
 namespace BeeSolution.Controllers
 {
@@ -12,7 +13,12 @@ namespace BeeSolution.Controllers
         public ActionResult Index()
         {
             return View();
-        }        
+        }
+
+        public ActionResult Bee()
+        {
+            return View();
+        }
 
         [HttpPost]
         public ActionResult HitBees()
@@ -27,6 +33,28 @@ namespace BeeSolution.Controllers
             Hive myHive = new Hive();
             TempData["myHive"] = myHive;
             return View("Bees", myHive);
+        }
+        [HttpPost]
+        public ActionResult Whack()
+        {
+            Hive myHive = (Hive)TempData["myHive"];
+            myHive.HitBee();
+            TempData["myHive"] = myHive;
+            var str = JsonConvert.SerializeObject(myHive);
+            return Json(str, JsonRequestBehavior.AllowGet);
+        }
+        [HttpPost]
+        public ActionResult Bees()
+        {
+            Hive myHive = (Hive)TempData["myHive"];
+            if (myHive == null)
+            {
+                myHive = new Models.Hive();
+            }
+            myHive.HitBee();
+            TempData["myHive"] = myHive;
+            var str = JsonConvert.SerializeObject(myHive);
+            return Json(str, JsonRequestBehavior.AllowGet);
         }
     }
 }
