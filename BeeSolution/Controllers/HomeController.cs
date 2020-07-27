@@ -38,6 +38,10 @@ namespace BeeSolution.Controllers
         public ActionResult Whack()
         {
             Hive myHive = (Hive)TempData["myHive"];
+            if (myHive == null)
+            {
+                myHive = new Models.Hive();
+            }
             myHive.HitBee();
             TempData["myHive"] = myHive;
             var str = JsonConvert.SerializeObject(myHive);

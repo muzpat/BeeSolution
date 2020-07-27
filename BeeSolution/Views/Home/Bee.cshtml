@@ -13,12 +13,13 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
     <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+    <script src="~/Scripts/jquery-ui-i18n.js"></script>
     <script type="text/javascript">
         var i = 1;                     //  set your counter to 1
         var myTimer = 'start';
 
         $(document).ready(function () {
-            //alert('here1');
+        
             $.ajax({
                 type: "POST",
                 url: "../Home/Bees",
@@ -119,9 +120,17 @@
               + '</td></tr>');
                 }
                 else {
-                    $('#Grid').append('<tr bgcolor="#42f489"><td>' + data.BeeHive[i].beeId + '</td><td>' + beegrade
-         + '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + alive
-         + '</td></tr>');
+                
+                    if (alive == 'Alive') {
+                        $('#Grid').append('<tr bgcolor="#42f489"><td>' + data.BeeHive[i].beeId + '</td><td>' + beegrade
++ '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + alive
++ '</td></tr>');
+                    } else {
+                        $('#Grid').append('<tr bgcolor="red"><td  bgcolor="red">' + data.BeeHive[i].beeId + '</td><td>' + beegrade
++ '</td><td>' + data.BeeHive[i].lifeSpan + '</td><td>' + alive
++ '</td></tr>');
+                    }
+
                 }
             }
             $('#Grid').append('</table>');

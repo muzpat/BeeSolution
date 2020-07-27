@@ -52,13 +52,13 @@ namespace BeeSolution.Models
             // create workers
             for (int i = 1; i < 5; i++)
             {
-                Bee worker = new Bee(BeeType.Worker, 75, i);
+                Bee worker = new Bee(BeeType.Worker, 25, i);
                 BeeHive.Add(worker);
             }
             // create drones
             for (int i = 0; i < 8; i++)
             {
-                Bee drone = new Bee(BeeType.Drone, 50, 5 + i);
+                Bee drone = new Bee(BeeType.Drone, 10, 5 + i);
                 BeeHive.Add(drone);
             }
             beeWhacked = -1;
